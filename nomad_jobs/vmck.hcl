@@ -89,7 +89,7 @@ job "vmck" {
       }
       driver = "docker"
       config {
-        image = "vmck/vmck:more-threads"
+        image = "vmck/vmck:tweaks"
         hostname = "${attr.unique.hostname}"
         dns_servers = ["${attr.unique.network.ip-address}"]
         volumes = [

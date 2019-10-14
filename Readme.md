@@ -1,4 +1,4 @@
-# ACS vmchecker deployment
+# liquiddemo.org deployment
 
 Deploy on fritz using [Terraform].
 

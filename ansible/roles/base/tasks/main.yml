@@ -1,0 +1,22 @@
+---
+- name: Print hostvars
+  debug:
+    var: hostvars[inventory_hostname]
+    verbosity: 2
+
+- name: Upgrade packages
+  become: true
+  apt:
+    cache_valid_time: 3600
+    upgrade: safe
+
+- name: Install packages
+  become: true
+  apt:
+    cache_valid_time: 3600
+    pkg:
+      - git
+      - build-essential
+      - linux-headers-amd64
+      - vim
+      - tmux

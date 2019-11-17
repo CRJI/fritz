@@ -1,0 +1,33 @@
+---
+- name: Wireguard debian unstable repo
+  become: true
+  copy:
+    content: "deb http://deb.debian.org/debian/ unstable main\n"
+    dest: /etc/apt/sources.list.d/wireguard.list
+
+- name: Wireguard debian unstable pin
+  become: true
+  copy:
+    content: "Package: *\nPin: release a=unstable\nPin-Priority: 90\n"
+    dest: /etc/apt/preferences.d/limit-unstable
+
+- name: Wireguard package
+  become: true
+  apt:
+    cache_valid_time: 3600
+    name: wireguard
+
+- name: Wireguard config
+  become: true
+  template:
+    src: cluster.conf
+    dest: /etc/wireguard/cluster.conf
+    mode: 0600
+  notify:
+  - Wireguard wg-quick
+
+- name: Wireguard systemd service
+  become: true
+  systemd:
+    name: wg-quick@cluster
+    enabled: yes

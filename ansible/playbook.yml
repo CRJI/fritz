@@ -1,0 +1,6 @@
+---
+- hosts: '*'
+  roles:
+    - base
+    - wireguard
+    - cluster

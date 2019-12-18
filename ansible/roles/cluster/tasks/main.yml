@@ -1,40 +1,40 @@
 ---
-- import_tasks: tasks/docker-deb.yml
-
-- name: Cluster user
-  user:
-    name: cluster
-    shell: /bin/bash
-    groups: sudo,docker
-    append: yes
-
-- name: Cluster opt permissions
-  file:
-    path: /opt
-    owner: cluster
+# ignore user and permissions for now
+#- name: Cluster user
+#  user:
+#    name: cluster
+#    shell: /bin/bash
+#    groups: sudo,docker
+#    append: yes
+#
+#- name: Cluster opt permissions
+#  file:
+#    path: /opt
+#    owner: cluster
 
 - name: Cluster repo
-  become: true
-  become_user: cluster
   git:
     repo: https://github.com/liquidinvestigations/cluster
     dest: /opt/cluster
-    version: master
+    version: "{{ cluster_version }}"
 
-- name: Cluster ini
-  become: true
-  become_user: cluster
-  template:
-    src: cluster.ini
-    dest: /opt/cluster/cluster.ini
+- name: Pull cluster docker image
+  # The "docker_image" plugin requires python on the host, let's avoid it.
+  shell: "docker pull liquidinvestigations/cluster:{{ cluster_version }}"
 
-- name: Cluster container
-  become: true
-  become_user: cluster
-  shell: |
-    set -ex
-    id
-    /opt/cluster/bin/docker.sh
-    docker exec cluster ./cluster.py wait
-  args:
-    creates: /opt/cluster/etc/supervisord.conf
+# Leave the config manual for now
+#- name: Cluster ini
+#  become: true
+#  become_user: cluster
+#  template:
+#    src: cluster.ini
+#    dest: /opt/cluster/cluster.ini
+
+- name: Run new cluster containers
+  shell: "/opt/cluster/bin/docker.sh --image liquidinvestigations/cluster:{{ cluster_version }} --rm"
+
+- name: Set KVM permissions
+  shell: "docker exec cluster chmod 777 /dev/kvm"
+
+- name: Wait for cluster health checks
+  shell: "docker exec cluster ./cluster.py wait"

@@ -1,6 +1,7 @@
 ---
 - hosts: '*'
+  any_errors_fatal: true
   roles:
     - base
-    - wireguard
+    #- wireguard
     - cluster

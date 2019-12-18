@@ -1,0 +1,30 @@
+---
+- name: Docker Debian apt key
+  become: true
+  apt_key:
+    url: https://download.docker.com/linux/debian/gpg
+  when: ansible_distribution == 'Debian'
+
+- name: Docker Ubuntu apt key
+  become: true
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Docker apt debian repo
+  become: true
+  apt_repository:
+    repo: "deb https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
+  when: ansible_distribution == 'Debian'
+
+- name: Docker apt ubuntu repo
+  become: true
+  apt_repository:
+    repo: "deb https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Docker packages
+  become: true
+  apt:
+    cache_valid_time: 3600
+    name: docker-ce

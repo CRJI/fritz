@@ -1,8 +1,9 @@
 # liquiddemo.org deployment
 
-Deploy on fritz using [Terraform].
+Deploy demo on fritz using [Terraform] and [Ansible].
 
 [Terraform]: https://www.terraform.io/
+[Ansible]: https://docs.ansible.com/
 
 
 ## HowTo

@@ -2,8 +2,6 @@
 
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 
-#ANSIBLE_NOCOWS=1 ANSIBLE_CONFIG="$(pwd)/ansible.cfg" ansible-playbook -i "$(pwd)/hosts.ini" playbook.yml "$@"
-
 docker run -it --rm \
   --env ANSIBLE_NOCOWS=1 \
   --env ANSIBLE_CONFIG=/app/ansible.cfg \

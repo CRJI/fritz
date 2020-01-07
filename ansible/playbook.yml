@@ -5,3 +5,4 @@
     - base
     #- wireguard
     - cluster
+    - node

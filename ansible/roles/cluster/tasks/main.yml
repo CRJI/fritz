@@ -16,11 +16,11 @@
   git:
     repo: https://github.com/liquidinvestigations/cluster
     dest: /opt/cluster
-    version: "{{ cluster_version }}"
+    version: "{{ cluster_git_version }}"
 
 - name: Pull cluster docker image
   # The "docker_image" plugin requires python on the host, let's avoid it.
-  shell: "docker pull liquidinvestigations/cluster:{{ cluster_version }}"
+  shell: "docker pull liquidinvestigations/cluster:{{ cluster_docker_version }}"
 
 # Leave the config manual for now
 #- name: Cluster ini
@@ -30,11 +30,13 @@
 #    src: cluster.ini
 #    dest: /opt/cluster/cluster.ini
 
-- name: Run new cluster containers
-  shell: "/opt/cluster/bin/docker.sh --image liquidinvestigations/cluster:{{ cluster_version }} --rm"
-
-- name: Set KVM permissions
-  shell: "docker exec cluster chmod 777 /dev/kvm"
-
-- name: Wait for cluster health checks
-  shell: "docker exec cluster ./cluster.py wait"
+- name: Start everything
+  shell: |
+      set -ex
+      /opt/cluster/bin/docker.sh --image liquidinvestigations/cluster:{{ cluster_docker_version }} --rm
+      docker exec cluster chmod 777 /dev/kvm
+      docker exec cluster ./cluster.py wait
+  register: result
+  until: result.rc == 0
+  retries: 3
+  delay: 15

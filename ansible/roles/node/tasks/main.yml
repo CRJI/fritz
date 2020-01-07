@@ -1,0 +1,4 @@
+---
+- name: Node installation
+  import_tasks: node.yml
+  when: node_path is defined

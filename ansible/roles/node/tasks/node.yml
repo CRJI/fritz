@@ -1,0 +1,14 @@
+- name: Node repo
+  git:
+    repo: https://github.com/liquidinvestigations/node
+    dest: /opt/node
+    version: "{{ node_git_version }}"
+
+# Leave the config manual for now
+#- name: Liquid ini
+#  template:
+#    src: liquid.ini
+#    dest: /opt/node/liquid.ini
+
+- name: Liquid Deploy
+  shell: "/opt/node/liquid deploy"

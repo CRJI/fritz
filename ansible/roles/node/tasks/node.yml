@@ -12,3 +12,7 @@
 
 - name: Liquid Deploy
   shell: "/opt/node/liquid deploy"
+  register: result
+  until: result.rc == 0
+  retries: 2
+  delay: 16

@@ -33,10 +33,10 @@
 - name: Start everything
   shell: |
       set -ex
-      /opt/cluster/bin/docker.sh --image liquidinvestigations/cluster:{{ cluster_docker_version }} --rm
+      /opt/cluster/bin/docker.sh --image liquidinvestigations/cluster:{{ cluster_docker_version }} --rm --nowait
       docker exec cluster chmod 777 /dev/kvm
       docker exec cluster ./cluster.py wait
   register: result
   until: result.rc == 0
   retries: 3
-  delay: 15
+  delay: 35

@@ -1,0 +1,5 @@
+---
+- name: Wireguard wg-quick
+  become: true
+  shell:
+    wg-quick up cluster

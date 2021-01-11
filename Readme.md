@@ -1,11 +1,15 @@
 # liquiddemo.org deployment
 
-Deploy on fritz using [Terraform].
+Deploy demo on fritz using [Terraform] and [Ansible].
 
 [Terraform]: https://www.terraform.io/
+[Ansible]: https://docs.ansible.com/
 
 
 ## HowTo
+
+Use the (Ansible roles)[./ansible/Readme.md] to set up a working Nomad cluster.
+
 First read through the Terraform [Build Infrastructure tutorial] if you're new
 to Terraform.
 

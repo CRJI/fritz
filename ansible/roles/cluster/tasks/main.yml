@@ -1,0 +1,42 @@
+---
+# ignore user and permissions for now
+#- name: Cluster user
+#  user:
+#    name: cluster
+#    shell: /bin/bash
+#    groups: sudo,docker
+#    append: yes
+#
+#- name: Cluster opt permissions
+#  file:
+#    path: /opt
+#    owner: cluster
+
+- name: Cluster repo
+  git:
+    repo: https://github.com/liquidinvestigations/cluster
+    dest: /opt/cluster
+    version: "{{ cluster_git_version }}"
+
+- name: Pull cluster docker image
+  # The "docker_image" plugin requires python on the host, let's avoid it.
+  shell: "docker pull liquidinvestigations/cluster:{{ cluster_docker_version }}"
+
+# Leave the config manual for now
+#- name: Cluster ini
+#  become: true
+#  become_user: cluster
+#  template:
+#    src: cluster.ini
+#    dest: /opt/cluster/cluster.ini
+
+- name: Start everything
+  shell: |
+      set -ex
+      /opt/cluster/bin/docker.sh --image liquidinvestigations/cluster:{{ cluster_docker_version }} --rm --nowait
+      docker exec cluster chmod 777 /dev/kvm
+      docker exec cluster ./cluster.py wait
+  register: result
+  until: result.rc == 0
+  retries: 3
+  delay: 35

@@ -1,0 +1,71 @@
+---
+- name: Print hostvars
+  debug:
+    var: hostvars[inventory_hostname]
+    verbosity: 2
+
+- name: Update apt packages
+  become: true
+  apt:
+    cache_valid_time: 3600
+    upgrade: safe
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Update pacman packages
+  become: true
+  when: ansible_distribution == "Archlinux"
+  pacman:
+    update_cache: yes
+
+- name: Install Debian linux headers
+  when: ansible_distribution == 'Debian'
+  become: true
+  apt:
+    pkg:
+      - linux-headers-amd64
+
+- name: Install Ubuntu linux headers
+  when: ansible_distribution == 'Ubuntu'
+  become: true
+  apt:
+    pkg:
+      - "linux-headers-{{ ansible_kernel }}"
+
+- name: Install Debian/Ubuntu packages
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  become: true
+  apt:
+    cache_valid_time: 3600
+    pkg:
+      - git
+      - build-essential
+      - vim
+      - tmux
+      - curl
+      - wget
+      - python-pip
+
+- import_tasks: tasks/docker-deb.yml
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+
+- name: Install Arch Linux packages
+  when: ansible_distribution == 'Archlinux'
+  become: true
+  pacman:
+    name:
+      - docker
+      - git
+      - linux-headers
+      - python-pip
+      - vim
+      - tmux
+      - curl
+      - wget
+    state: present
+
+- name: Start and enable Docker
+  systemd:
+    name: docker
+    enabled: yes
+    state: started
